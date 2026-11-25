@@ -1,0 +1,5 @@
+read_verilog -sv ../rtl/falcon512_pkg.sv ../rtl/falcon512_ntt.sv ../rtl/falcon512_verify.sv
+hierarchy -top falcon512_verify -check
+synth -top falcon512_verify
+check
+stat

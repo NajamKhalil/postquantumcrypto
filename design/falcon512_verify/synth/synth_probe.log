@@ -1,0 +1,5 @@
+Warning: Replacing memory \mem with list of registers. See ../rtl/falcon512_ntt.sv:140
+Warning: Replacing memory \s1hat_ram with list of registers. See ../rtl/falcon512_verify.sv:257
+Warning: Replacing memory \h_ram with list of registers. See ../rtl/falcon512_verify.sv:209
+Warning: Replacing memory \u_ram with list of registers. See ../rtl/falcon512_verify.sv:205
+synthesis successful (0 errors)

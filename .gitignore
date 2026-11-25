@@ -6,4 +6,3 @@ monitor/usage.jsonl
 **/sim/my_sim_exe*
 **/sim/simulation.vcd
 **/sim/*.vvp
-**/synth/*.ys

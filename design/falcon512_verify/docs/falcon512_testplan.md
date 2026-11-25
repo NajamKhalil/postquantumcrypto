@@ -53,9 +53,9 @@ This table is the complete case list; the report adds the measured status.
 | T1 | Empty-vector identity | `u_time = h_time = s2_time = 0`, 512 beats on all three streams | 512 zero `s1` beats, norm `0`, accept |
 | T2 | Negacyclic wrap sign | `s2_time[0] = 1`, `h_time[511] = 1`, sparse `s1_time`; the product coefficient at index 511 is `-1` | `s1` equals the chosen sparse vector; wrong wrap sign cannot match |
 | T3 | Inclusive norm boundary | `s1_time = {2483, 2406, 4699}` at indices `{0, 1, 2}`, `s2_time = 0`; `2483^2 + 2406^2 + 4699^2 = 34,034,726` | norm exactly `34034726`, accept |
-| T4 | First rejected norm | Same as T3 with the third coefficient raised to `4700` | norm `34043125`, reject |
+| T4 | First rejected norm | Same as T3 with the third coefficient raised to `4700` | norm `34044125`, reject |
 | T5 | Random known-answer vectors | Three seeded vectors with dense `s2` and `h`, expectation from schoolbook multiply | every coefficient and norm matches; accept or reject follows the computed norm |
-| T6 | Output backpressure | Re-run T3 with `m_tready` held low for four beats at the start and two beats mid-stream | data held stable, no beats lost, verdict coincident with final accepted beat |
+| T6 | Output backpressure | Re-run T3 with `m_tready` held low for four beats at the start and two beats mid-stream | norm `34034726`, accept; data held stable, no beats lost, verdict coincident with final accepted beat |
 
 ### 2.1 Seeding and replay
 

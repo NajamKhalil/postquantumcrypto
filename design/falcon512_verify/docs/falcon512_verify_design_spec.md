@@ -8,8 +8,8 @@
 | Language | SystemVerilog-2012 |
 | Target | FPGA synthesizable RTL, single clock and one active-low asynchronous reset |
 | Clocking | `axi_st_clk` / `axi_st_areset_n` |
-| Verify latency | 5,632 cycles from the last accepted input beat to the verdict, fixed |
-| Throughput | one verification per **6,144 cycles** including input load; this version does not overlap two verifications |
+| Verify latency | 12,296 cycles from the last accepted input beat to the verdict, measured by the self-checking bench |
+| Throughput | one verification per **12,808 cycles** including the 512-beat input load; this version does not overlap two verifications |
 | Modes | accept/reject according to the norm bound; no other modes |
 
 ---
@@ -18,7 +18,7 @@
 
 A signature-verification datapath for the Falcon-512 parameter set described in the supplied design document: it takes the hash target `u` and public key `h` in NTT form, takes the signature component `s2` in coefficient form, reconstructs `s1 = u - s2*h` in the ring `Z_q[x]/(x^512 + 1)`, and accepts only when the squared Euclidean norm of `(s1, s2)` does not exceed `floor(beta^2)`.
 
-The property that matters is that **the polynomial product is the exact negacyclic product modulo 12289**, including the sign flip when an exponent wraps past `x^511 = -1`. A schoolbook implementation would also be exact but needs 262,144 multiplications; the NTT used here needs 4,608 butterflies and is the same integer arithmetic the source document identifies as the reason the scheme is fast.
+The property that matters is that **the polynomial product is the exact negacyclic product modulo 12289**, including the sign flip when an exponent wraps past `x^511 = -1`. A schoolbook implementation would also be exact but needs 262,144 multiplications; the NTT used here needs 2,304 butterflies per transform and is the same integer arithmetic the source document identifies as the reason the scheme is fast. Two transforms and the pointwise stage are used per verification.
 
 What it is not: it is not a key generator and not a signer, it does not implement SHAKE256, and it does not decompress the Falcon byte-encoded `s2` or `h`. Those interfaces are outside this block and their outputs are presented here as coefficient streams. Section 6 states the exact boundary.
 
@@ -70,23 +70,24 @@ Each stream is a standard ready/valid handshake. `tvalid` and `tready` form the 
 
 ```
    u[511:0] (NTT) ----> u_ram ----+
-                                  |   s1_ntt[i] = (u[i] - s2_ntt[i]*h[i]) mod q
-   h[511:0] (NTT) ----> h_ram ----+   ----------> work_ram
+                                  |  s1_ntt[i] = (u[i] - s2_ntt[i]*h[i]) mod q
+   h[511:0] (NTT) ----> h_ram ----+
                                   |
    s2[511:0] (time) -> + twist -> bit-reversed store -> forward NTT -> work_ram
                           |
                           +--> accumulate ||s2||^2 during load
 
-   work_ram -> pointwise with u_ram/h_ram -> inverse NTT -> bit-reversed untwisted read
-                                                          |
-                                                          +--> accumulate ||s1||^2
-                                                          +--> m_axis_s1 stream
-                                                          +--> compare with BETA_SQ
+   work_ram -> pointwise with u_ram/h_ram -> s1hat_ram -> copy back -> inverse NTT
+                                                                        |
+                                                                        +--> bit-reversed untwisted read
+                                                                        +--> accumulate ||s1||^2
+                                                                        +--> m_axis_s1 stream
+                                                                        +--> compare with BETA_SQ
 ```
 
-The three input streams are written into three single-port coefficient memories while their norms and twists are computed. The working polynomial is stored bit-reversed on load, which lets the NTT controller use an in-place Cooley-Tukey butterfly without a separate permutation pass. The inverse transform reads back through the same reversed address map and applies the inverse twist during the result stream.
+The three input streams are written into coefficient memories while their norms and twists are computed. The working polynomial is stored bit-reversed on load, which lets the NTT controller use an in-place Cooley-Tukey butterfly without a separate permutation pass. The pointwise result is written into a fourth memory, `s1hat_ram`, at its natural index and copied back into the work memory only after the forward transform has finished all its reads. This prevents an early in-place overwrite from corrupting a later butterfly. The inverse transform reads back through the same reversed address map and applies the inverse twist during the result stream.
 
-A single butterfly engine is reused for all 4,608 butterflies. One butterfly needs two coefficient reads, one modular multiply for the twiddle, and two modular additions; those are kept inside one pipeline stage so the logic between registers stays short.
+A single butterfly engine is reused for all 2,304 butterflies in each transform. One butterfly takes two clocks: the fetch/commit pair reads the two coefficients, multiplies the twiddle and writes the two results. That choice keeps the logic between registers short at the cost of a 4,608-cycle transform.
 
 ---
 
@@ -102,7 +103,7 @@ For stage `s = 1..9` the butterfly length is `L = 2^s`, the twiddle step is `OME
   b' = (a - tmp) mod Q
 ```
 
-There are exactly 256 butterflies per stage and 9 stages, so one transform is 2,304 butterflies. The controller keeps the stage, butterfly index, group twiddle and current `w` as state; `w` is reset at each group boundary.
+There are exactly 256 butterflies per stage and 9 stages, so one transform performs 2,304 butterflies and takes 4,608 clocks in this controller. The controller keeps the stage, butterfly index, group twiddle and current `w` as state; `w` is reset at each group boundary.
 
 Modular multiplication uses a fixed Barrett reduction with `m = floor(2^28 / Q) = 21843` and at most two corrective subtractions. This keeps the multiplier to one constant-coefficient product plus a few comparator levels, with no variable-latency divider in hardware.
 
@@ -143,29 +144,33 @@ One clock. `axi_st_areset_n` asynchronously clears control state, beat counters,
 |---|---|---|---|---|---|
 | `u_ram` | 16 | 512 | 1 cycle | 1 cycle | NTT-domain hash target |
 | `h_ram` | 16 | 512 | 1 cycle | 1 cycle | NTT-domain public key |
+| `s1hat_ram` | 16 | 512 | 1 cycle | 1 cycle | pointwise result staged before being copied into the work memory |
 | `work_ram` | 16 | 512 | 1 cycle | 1 cycle | Twisted `s2`, then `s1_ntt`, then `s1` |
 
-All three are inferred synchronous arrays. There are no initial blocks and no hardcoded key material.
+All four are inferred synchronous arrays. There are no initial blocks and no hardcoded key material.
 
 ---
 
 ## 9. Latency
 
-| Stage | Operation | Latency | Cumulative |
-|---|---|---|---|
-| S0 | Load three 512-beat streams | 512 cycles | 512 |
-| S1 | Forward NTT of `s2` | 2,304 cycles | 2,816 |
-| S2 | Pointwise `u - s2*h` | 512 cycles | 3,328 |
-| S3 | Inverse NTT of `s1_ntt` | 2,304 cycles | 5,632 |
-| S4 | Result stream and norm accumulation | 512 cycles | 6,144 |
+| Stage | Operation | Dominant cycles |
+|---|---|---|
+| S0 | Load three 512-beat streams | 512 |
+| S1 | Start and run the forward NTT of `s2` | 4,608 plus control |
+| S2 | Pointwise `u - s2*h` into `s1hat_ram` | 1,024 |
+| S3 | Copy `s1hat_ram` into the work memory | 512 |
+| S4 | Start and run the inverse NTT of `s1_ntt` | 4,608 plus control |
+| S5 | Result stream, untwist and norm accumulation | 1,024 plus verdict |
 
-The measured fixed cost from the last accepted input beat to the verdict pulse is 5,632 cycles; the table's cumulative column includes the 512 load beats. Backpressure on the output stream adds wait cycles and is reported separately in the verification report.
+The measured fixed cost from the last accepted input beat to the verdict pulse is 12,296 cycles; adding the 512 load beats gives 12,808 cycles for a complete verification. Backpressure on the output stream adds wait cycles and is reported separately in the verification report.
 
 ---
 
 ## 10. Elaboration checks and simulation-only code
 
 The root constants are checked in an unguarded `initial` block with `$fatal`: `N` must be 512, `Q` must be 12289, `PSI^512 mod Q` must equal `Q-1`, `PSI*PSI_INV mod Q` must equal 1, and `DATA_W` must be at least 14. Protocol and overflow checks (stream beat counts, coefficient range, accumulator range) are guarded by `RTL_SIM` and never drive hardware.
+
+Package functions use the classic function-name assignment form instead of `return`, so both Icarus and Yosys parse the same source without a conditional define. Module-level imports are replaced by local aliases and qualified package calls for the same reason.
 
 ---
 
@@ -181,9 +186,12 @@ The test plan is `falcon512_testplan.md`. It uses an independent schoolbook refe
 |---|---|
 | `rtl/falcon512_pkg.sv` | shared constants and coefficient helper functions |
 | `rtl/falcon512_ntt.sv` | reusable 512-point forward/inverse NTT engine |
-| `rtl/falcon512_verify.sv` | top-level controller, memories, pointwise stage and norm check |
+| `rtl/falcon512_verify.sv` | top-level controller, memories, pointwise stage, permutation buffer and norm check |
 | `sim/tb_falcon512_verify.sv` | self-checking testbench with transform-based input generation, schoolbook reference model and KAT cases |
 | `sim/f_list.f`, `sim/run.ps1`, `sim/run.sh` | compile list and run scripts |
+| `lint/lint.log` | real Icarus lint output without `RTL_SIM` |
+| `synth/synth.ys`, `synth/synth.log` | Yosys synthesis script and raw output |
+| `docs/falcon512_verification.md` | measured results, raw tool output and mutation campaign |
 
 ---
 
