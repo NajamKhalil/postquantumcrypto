@@ -1,0 +1,109 @@
+﻿# mutation campaign 2026-11-25 11:19:53
+# source: G:\Git\postquantumcrypto\design\falcon512_verify
+# copies: C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut
+# M1 inverse stage 9 root replaced by forward root
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:80: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:359: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:363: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:368: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:373: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:377: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:227: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:230: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:233: warning: System task ($error) cannot be synthesized in an always_ff process.
+RUN 1  CASE T1  seed=7919  bp=0  gap=0  latency=12296  norm=0  accept=1  mismatches=0
+RUN 2  CASE T2  seed=15838  bp=0  gap=0  latency=12296  norm=84  accept=1  mismatches=6
+RUN 3  CASE T3  seed=23757  bp=0  gap=0  latency=12296  norm=34034726  accept=1  mismatches=12
+RUN 4  CASE T4  seed=31676  bp=0  gap=0  latency=12296  norm=34044125  accept=0  mismatches=17
+RUN 5  CASE T5  seed=39595  bp=0  gap=0  latency=12296  norm=13124735354  accept=0  mismatches=528
+RUN 6  CASE T5  seed=47514  bp=0  gap=0  latency=12296  norm=13191523991  accept=0  mismatches=1039
+RUN 7  CASE T5  seed=55433  bp=0  gap=0  latency=12296  norm=12830286481  accept=0  mismatches=1550
+RUN 8  CASE T3  seed=63352  bp=1  gap=0  latency=12302  norm=34034726  accept=1  mismatches=1556
+RESULT  = FAIL   (1556 mismatch(es))
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\sim\tb_falcon512_verify.sv:593: $finish called at 1107095 (1s)
+KILLED   M1 - inverse stage 9 root replaced by forward root
+# M2 negacyclic wrap sign removed from reference model
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:80: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:359: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:363: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:368: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:373: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:377: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:227: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:230: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:233: warning: System task ($error) cannot be synthesized in an always_ff process.
+RUN 1  CASE T1  seed=7919  bp=0  gap=0  latency=12296  norm=0  accept=1  mismatches=0
+RUN 2  CASE T2  seed=15838  bp=0  gap=0  latency=12296  norm=84  accept=1  mismatches=0
+RUN 3  CASE T3  seed=23757  bp=0  gap=0  latency=12296  norm=34034726  accept=1  mismatches=0
+RUN 4  CASE T4  seed=31676  bp=0  gap=0  latency=12296  norm=34044125  accept=0  mismatches=0
+RUN 5  CASE T5  seed=39595  bp=0  gap=0  latency=12296  norm=13124735354  accept=0  mismatches=512
+RUN 6  CASE T5  seed=47514  bp=0  gap=0  latency=12296  norm=13191523991  accept=0  mismatches=1024
+RUN 7  CASE T5  seed=55433  bp=0  gap=0  latency=12296  norm=12830286481  accept=0  mismatches=1536
+RUN 8  CASE T3  seed=63352  bp=1  gap=0  latency=12302  norm=34034726  accept=1  mismatches=1536
+RESULT  = FAIL   (1536 mismatch(es))
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\sim\tb_falcon512_verify.sv:593: $finish called at 1107095 (1s)
+KILLED   M2 - negacyclic wrap sign removed from reference model
+# M3 inclusive norm comparison changed to exclusive
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:80: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:359: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:363: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:368: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:373: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:377: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:227: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:230: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:233: warning: System task ($error) cannot be synthesized in an always_ff process.
+RUN 1  CASE T1  seed=7919  bp=0  gap=0  latency=12296  norm=0  accept=1  mismatches=0
+RUN 2  CASE T2  seed=15838  bp=0  gap=0  latency=12296  norm=84  accept=1  mismatches=0
+RUN 3  CASE T3  seed=23757  bp=0  gap=0  latency=12296  norm=34034726  accept=1  mismatches=1
+RUN 4  CASE T4  seed=31676  bp=0  gap=0  latency=12296  norm=34044125  accept=0  mismatches=1
+RUN 5  CASE T5  seed=39595  bp=0  gap=0  latency=12296  norm=13124735354  accept=0  mismatches=1
+RUN 6  CASE T5  seed=47514  bp=0  gap=0  latency=12296  norm=13191523991  accept=0  mismatches=1
+RUN 7  CASE T5  seed=55433  bp=0  gap=0  latency=12296  norm=12830286481  accept=0  mismatches=1
+RUN 8  CASE T3  seed=63352  bp=1  gap=0  latency=12302  norm=34034726  accept=1  mismatches=2
+RESULT  = FAIL   (2 mismatch(es))
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\sim\tb_falcon512_verify.sv:593: $finish called at 1107095 (1s)
+KILLED   M3 - inclusive norm comparison changed to exclusive
+# M4 butterfly count shortened by one
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:80: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:359: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:363: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:368: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:373: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:377: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:227: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:230: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:233: warning: System task ($error) cannot be synthesized in an always_ff process.
+RUN 1  CASE T1  seed=7919  bp=0  gap=0  latency=12292  norm=0  accept=1  mismatches=1
+RUN 2  CASE T2  seed=15838  bp=0  gap=0  latency=12292  norm=84  accept=1  mismatches=516
+RUN 3  CASE T3  seed=23757  bp=0  gap=0  latency=12292  norm=34034726  accept=1  mismatches=517
+RUN 4  CASE T4  seed=31676  bp=0  gap=0  latency=12292  norm=34044125  accept=0  mismatches=518
+RUN 5  CASE T5  seed=39595  bp=0  gap=0  latency=12292  norm=13124735354  accept=0  mismatches=1032
+RUN 6  CASE T5  seed=47514  bp=0  gap=0  latency=12292  norm=13191523991  accept=0  mismatches=1546
+RUN 7  CASE T5  seed=55433  bp=0  gap=0  latency=12292  norm=12830286481  accept=0  mismatches=2060
+RUN 8  CASE T3  seed=63352  bp=1  gap=0  latency=12298  norm=34034726  accept=1  mismatches=2060
+RESULT  = FAIL   (2060 mismatch(es))
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\sim\tb_falcon512_verify.sv:593: $finish called at 1106775 (1s)
+KILLED   M4 - butterfly count shortened by one
+# M5 PSI^i twist removed from loaded s2
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:80: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:359: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:363: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:368: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:373: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_verify.sv:377: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:227: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:230: warning: System task ($error) cannot be synthesized in an always_ff process.
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\rtl\falcon512_ntt.sv:233: warning: System task ($error) cannot be synthesized in an always_ff process.
+RUN 1  CASE T1  seed=7919  bp=0  gap=0  latency=12296  norm=0  accept=1  mismatches=0
+RUN 2  CASE T2  seed=15838  bp=0  gap=0  latency=12296  norm=84  accept=1  mismatches=0
+RUN 3  CASE T3  seed=23757  bp=0  gap=0  latency=12296  norm=34034726  accept=1  mismatches=0
+RUN 4  CASE T4  seed=31676  bp=0  gap=0  latency=12296  norm=34044125  accept=0  mismatches=0
+RUN 5  CASE T5  seed=39595  bp=0  gap=0  latency=12296  norm=13124735354  accept=0  mismatches=513
+RUN 6  CASE T5  seed=47514  bp=0  gap=0  latency=12296  norm=13191523991  accept=0  mismatches=1026
+RUN 7  CASE T5  seed=55433  bp=0  gap=0  latency=12296  norm=12830286481  accept=0  mismatches=1539
+RUN 8  CASE T3  seed=63352  bp=1  gap=0  latency=12302  norm=34034726  accept=1  mismatches=1539
+RESULT  = FAIL   (1539 mismatch(es))
+C:\Users\najam\AppData\Local\Temp\opencode\falcon_regress_mut\sim\tb_falcon512_verify.sv:593: $finish called at 1107095 (1s)
+KILLED   M5 - PSI^i twist removed from loaded s2
+MUTATION  = PASS   (5 killed, 0 survived)

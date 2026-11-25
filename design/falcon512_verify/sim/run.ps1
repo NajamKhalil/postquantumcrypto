@@ -49,13 +49,13 @@ if ($mode -in '-h', '--help', '/?') {
 $iverilog = Find-Iverilog
 $vvp = Find-Vvp
 
-$compile_out = & $iverilog -s tb_falcon512_verify -g2012 -f f_list.f -o my_sim_exe tb_falcon512_verify.sv 2>&1
+$compile_out = & $iverilog -s tb_falcon512_verify -g2012 -f f_list.f -o my_sim_exe tb_falcon512_verify.sv 2>&1 | ForEach-Object { $_.ToString() }
 Write-Log $compile_out
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 if ($mode -eq '-compile') { exit 0 }
 
-$sim_out = & $vvp my_sim_exe 2>&1
+$sim_out = & $vvp my_sim_exe 2>&1 | ForEach-Object { $_.ToString() }
 Write-Log $sim_out -Append
 $rc = $LASTEXITCODE
 Remove-Item -Path my_sim_exe -Force -ErrorAction SilentlyContinue

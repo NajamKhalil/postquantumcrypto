@@ -1,0 +1,78 @@
+﻿../rtl/falcon512_ntt.sv:80: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+../rtl/falcon512_verify.sv:359: warning: System task ($error) cannot be synthesized in an always_ff process.
+../rtl/falcon512_verify.sv:363: warning: System task ($error) cannot be synthesized in an always_ff process.
+../rtl/falcon512_verify.sv:368: warning: System task ($error) cannot be synthesized in an always_ff process.
+../rtl/falcon512_verify.sv:373: warning: System task ($error) cannot be synthesized in an always_ff process.
+../rtl/falcon512_verify.sv:377: warning: System task ($error) cannot be synthesized in an always_ff process.
+../rtl/falcon512_ntt.sv:227: warning: System task ($error) cannot be synthesized in an always_ff process.
+../rtl/falcon512_ntt.sv:230: warning: System task ($error) cannot be synthesized in an always_ff process.
+../rtl/falcon512_ntt.sv:233: warning: System task ($error) cannot be synthesized in an always_ff process.
+# CONFIG seed-sweep-a  +REGRESS=1 +SEED=101 +SEED_COUNT=4 +BP=0
+RUN 1  CASE T1  seed=8020  bp=0  gap=0  latency=12296  norm=0  accept=1  mismatches=0
+RUN 2  CASE T2  seed=15939  bp=0  gap=0  latency=12296  norm=84  accept=1  mismatches=0
+RUN 3  CASE T3  seed=23858  bp=0  gap=0  latency=12296  norm=34034726  accept=1  mismatches=0
+RUN 4  CASE T4  seed=31777  bp=0  gap=0  latency=12296  norm=34044125  accept=0  mismatches=0
+RUN 5  CASE T5  seed=39696  bp=0  gap=0  latency=12296  norm=13298352407  accept=0  mismatches=0
+RUN 6  CASE T5  seed=47615  bp=0  gap=0  latency=12296  norm=13023489311  accept=0  mismatches=0
+RUN 7  CASE T5  seed=55534  bp=0  gap=0  latency=12296  norm=13014664072  accept=0  mismatches=0
+RUN 8  CASE T3  seed=63453  bp=1  gap=0  latency=12302  norm=34034726  accept=1  mismatches=0
+RUN 9  CASE T7  seed=71372  bp=0  gap=0  latency=12296  norm=1350  accept=1  mismatches=0
+RUN 10  CASE T8  seed=79291  bp=0  gap=0  latency=12296  norm=10254  accept=1  mismatches=0
+RUN 11  CASE T9  seed=87210  bp=0  gap=0  latency=12296  norm=34034063  accept=1  mismatches=0
+RUN 12  CASE T10  seed=95129  bp=0  gap=0  latency=12296  norm=34035128  accept=0  mismatches=0
+RUN 13  CASE T5  seed=103048  bp=1  gap=0  latency=12302  norm=12998768382  accept=0  mismatches=0
+RUN 14  CASE T5  seed=110967  bp=2  gap=0  latency=12302  norm=13541100248  accept=0  mismatches=0
+RUN 15  CASE T5  seed=118886  bp=3  gap=0  latency=12552  norm=12886227861  accept=0  mismatches=0
+RUN 16  CASE T7  seed=126805  bp=4  gap=1  latency=12327  norm=1350  accept=1  mismatches=0
+RUN 17  CASE T5  seed=942662  bp=0  gap=0  latency=12296  norm=13857753380  accept=0  mismatches=0
+RUN 18  CASE T5  seed=1047391  bp=0  gap=0  latency=12296  norm=12817442702  accept=0  mismatches=0
+RUN 19  CASE T5  seed=1152120  bp=0  gap=0  latency=12296  norm=13117718763  accept=0  mismatches=0
+RUN 20  CASE T5  seed=1256849  bp=0  gap=0  latency=12296  norm=13223065068  accept=0  mismatches=0
+RESULT  = PASS
+tb_falcon512_verify.sv:593: $finish called at 2778325 (1s)
+CONFIG seed-sweep-a  PASS  runs=20
+# CONFIG seed-sweep-b  +REGRESS=1 +SEED=202 +SEED_COUNT=2 +BP=2
+RUN 1  CASE T1  seed=8121  bp=0  gap=0  latency=12296  norm=0  accept=1  mismatches=0
+RUN 2  CASE T2  seed=16040  bp=0  gap=0  latency=12296  norm=84  accept=1  mismatches=0
+RUN 3  CASE T3  seed=23959  bp=0  gap=0  latency=12296  norm=34034726  accept=1  mismatches=0
+RUN 4  CASE T4  seed=31878  bp=0  gap=0  latency=12296  norm=34044125  accept=0  mismatches=0
+RUN 5  CASE T5  seed=39797  bp=0  gap=0  latency=12296  norm=13547460495  accept=0  mismatches=0
+RUN 6  CASE T5  seed=47716  bp=0  gap=0  latency=12296  norm=13162227405  accept=0  mismatches=0
+RUN 7  CASE T5  seed=55635  bp=0  gap=0  latency=12296  norm=13211592109  accept=0  mismatches=0
+RUN 8  CASE T3  seed=63554  bp=1  gap=0  latency=12302  norm=34034726  accept=1  mismatches=0
+RUN 9  CASE T7  seed=71473  bp=0  gap=0  latency=12296  norm=1350  accept=1  mismatches=0
+RUN 10  CASE T8  seed=79392  bp=0  gap=0  latency=12296  norm=9985  accept=1  mismatches=0
+RUN 11  CASE T9  seed=87311  bp=0  gap=0  latency=12296  norm=34034063  accept=1  mismatches=0
+RUN 12  CASE T10  seed=95230  bp=0  gap=0  latency=12296  norm=34035128  accept=0  mismatches=0
+RUN 13  CASE T5  seed=103149  bp=1  gap=0  latency=12302  norm=13559552785  accept=0  mismatches=0
+RUN 14  CASE T5  seed=111068  bp=2  gap=0  latency=12302  norm=12614020090  accept=0  mismatches=0
+RUN 15  CASE T5  seed=118987  bp=3  gap=0  latency=12552  norm=12523263010  accept=0  mismatches=0
+RUN 16  CASE T7  seed=126906  bp=4  gap=1  latency=12327  norm=1350  accept=1  mismatches=0
+RUN 17  CASE T5  seed=942763  bp=2  gap=0  latency=12302  norm=12648704217  accept=0  mismatches=0
+RUN 18  CASE T5  seed=1047492  bp=2  gap=0  latency=12302  norm=12274025472  accept=0  mismatches=0
+RESULT  = PASS
+tb_falcon512_verify.sv:593: $finish called at 2501685 (1s)
+CONFIG seed-sweep-b  PASS  runs=18
+# CONFIG seed-sweep-c  +REGRESS=1 +SEED=303 +SEED_COUNT=2 +BP=3
+RUN 1  CASE T1  seed=8222  bp=0  gap=0  latency=12296  norm=0  accept=1  mismatches=0
+RUN 2  CASE T2  seed=16141  bp=0  gap=0  latency=12296  norm=84  accept=1  mismatches=0
+RUN 3  CASE T3  seed=24060  bp=0  gap=0  latency=12296  norm=34034726  accept=1  mismatches=0
+RUN 4  CASE T4  seed=31979  bp=0  gap=0  latency=12296  norm=34044125  accept=0  mismatches=0
+RUN 5  CASE T5  seed=39898  bp=0  gap=0  latency=12296  norm=12082497384  accept=0  mismatches=0
+RUN 6  CASE T5  seed=47817  bp=0  gap=0  latency=12296  norm=12627260758  accept=0  mismatches=0
+RUN 7  CASE T5  seed=55736  bp=0  gap=0  latency=12296  norm=13675823368  accept=0  mismatches=0
+RUN 8  CASE T3  seed=63655  bp=1  gap=0  latency=12302  norm=34034726  accept=1  mismatches=0
+RUN 9  CASE T7  seed=71574  bp=0  gap=0  latency=12296  norm=1350  accept=1  mismatches=0
+RUN 10  CASE T8  seed=79493  bp=0  gap=0  latency=12296  norm=9656  accept=1  mismatches=0
+RUN 11  CASE T9  seed=87412  bp=0  gap=0  latency=12296  norm=34034063  accept=1  mismatches=0
+RUN 12  CASE T10  seed=95331  bp=0  gap=0  latency=12296  norm=34035128  accept=0  mismatches=0
+RUN 13  CASE T5  seed=103250  bp=1  gap=0  latency=12302  norm=12986877522  accept=0  mismatches=0
+RUN 14  CASE T5  seed=111169  bp=2  gap=0  latency=12302  norm=12938217898  accept=0  mismatches=0
+RUN 15  CASE T5  seed=119088  bp=3  gap=0  latency=12552  norm=12816349157  accept=0  mismatches=0
+RUN 16  CASE T7  seed=127007  bp=4  gap=1  latency=12327  norm=1350  accept=1  mismatches=0
+RUN 17  CASE T5  seed=942864  bp=3  gap=0  latency=12552  norm=12860905221  accept=0  mismatches=0
+RUN 18  CASE T5  seed=1047593  bp=3  gap=0  latency=12552  norm=12822251430  accept=0  mismatches=0
+RESULT  = PASS
+tb_falcon512_verify.sv:593: $finish called at 2506685 (1s)
+CONFIG seed-sweep-c  PASS  runs=18
+REGRESSION  = PASS   (3 configurations, 56 runs)

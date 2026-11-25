@@ -7,7 +7,9 @@
 //              negacyclic multiply or chosen as a literal sparse vector. Every
 //              output beat, the 40-bit norm and the inclusive verdict are
 //              compared in one run; one mismatch counter produces the sole
-//              RESULT token and a bounded watchdog ends a stalled test.
+//              RESULT token and a bounded watchdog ends a stalled test. The
+//              optional +REGRESS mode adds accept-path, dense-boundary, seed
+//              sweep and backpressure-pattern runs without touching the DUT.
 ///////////////////////////////////////////////////////
 `default_nettype none
 
@@ -41,6 +43,14 @@ module tb_falcon512_verify;
   int mismatch = 0;
   int case_id = 0;
   int cycles = 0;
+  int seed_base_q = 0;
+  int seed_count_q = 1;
+  int bp_mode_q = 0;
+  int regress_q = 0;
+  int cycle_q = 0;
+  int last_input_cycle_q = 0;
+  int verdict_cycle_q = 0;
+  int last_latency_q = 0;
 
   falcon512_verify dut (
     .axi_st_clk      (clk           ),
@@ -78,6 +88,11 @@ module tb_falcon512_verify;
     data_d1 <= m_tdata;
     last_d1 <= m_tlast;
     ver_d1  <= verify_valid;
+  end
+
+  always_ff @(posedge clk) begin
+    if (rst_n) cycle_q <= cycle_q + 1;
+    else       cycle_q <= 0;
   end
 
   // ---------------------------------------------------------------------------
@@ -223,6 +238,11 @@ module tb_falcon512_verify;
     return int'(lfsr_q % 32'd12289) - 6144;
   endfunction : tb_rand
 
+  function automatic int tb_rand_bounded(input int span);
+    lfsr_q = lfsr_q * 32'd1664525 + 32'd1013904223;
+    return int'(lfsr_q % (2 * span + 1)) - span;
+  endfunction : tb_rand_bounded
+
   task automatic tb_expected_norm();
     longint acc;
     longint val;
@@ -269,8 +289,47 @@ module tb_falcon512_verify;
         exp_s1_a[1]   = 16'd2406;
         exp_s1_a[2]   = (which == 3) ? 16'd4699 : 16'd4700;
       end
+      7: begin
+        // T7: accept with non-zero s2, non-zero h and a chosen s1.
+        h_time_a[0]   = 16'd1;
+        h_time_a[1]   = 16'd2;
+        h_time_a[511] = 16'd3;
+        s2_time_a[0]  = 16'd11;
+        s2_time_a[1]  = 16'hfff9;  // -7
+        s2_time_a[511]= 16'd5;
+        exp_s1_a[0]   = 16'd17;
+        exp_s1_a[1]   = 16'hfff0;  // -16
+        exp_s1_a[2]   = 16'd23;
+        exp_s1_a[511] = 16'd9;
+      end
+      8: begin
+        // T8: dense low-amplitude vectors; the norm stays well inside beta^2.
+        lfsr_q = seed[31:0] ^ 32'h5a5a5a5a;
+        for (int i = 0; i < N; i++) begin
+          val = tb_rand_bounded(3);
+          h_time_a[i]  = f_to_mod(val[15:0]);
+          val = tb_rand_bounded(5);
+          s2_time_a[i] = val[15:0];
+          val = tb_rand_bounded(5);
+          exp_s1_a[i]  = val[15:0];
+        end
+      end
+      9: begin
+        // T9: dense accept 663 below beta^2: 511*257^2 + 532^2.
+        for (int i = 0; i < N; i++) begin
+          exp_s1_a[i] = 16'd257;
+        end
+        exp_s1_a[0] = 16'd532;
+      end
+      10: begin
+        // T10: dense reject 402 above beta^2: 511*257^2 + 533^2.
+        for (int i = 0; i < N; i++) begin
+          exp_s1_a[i] = 16'd257;
+        end
+        exp_s1_a[0] = 16'd533;
+      end
       default: begin
-        // T5/T6: dense seeded vectors within the signed balanced range.
+        // T5/T11: dense seeded vectors within the signed balanced range.
         lfsr_q = seed[31:0];
         for (int i = 0; i < N; i++) begin
           val = tb_rand();
@@ -314,8 +373,11 @@ module tb_falcon512_verify;
     repeat (2) @(posedge clk);
   endtask : tb_reset
 
-  task automatic tb_send(input int sel);
+  task automatic tb_send(input int sel, input int gap = 0);
     for (int i = 0; i < N; i++) begin
+      if (gap && ((i % 4) == 0)) begin
+        repeat (2) @(posedge clk);
+      end
       case (sel)
         0: begin
           u_tvalid = 1'b1;
@@ -338,31 +400,76 @@ module tb_falcon512_verify;
       case (sel)
         0: u_tvalid = 1'b0;
         1: h_tvalid = 1'b0;
-        default: s2_tvalid = 1'b0;
+        default: begin
+          s2_tvalid = 1'b0;
+          if (i == (N-1)) begin
+            last_input_cycle_q = cycle_q;
+          end
+        end
       endcase
     end
   endtask : tb_send
 
-  task automatic tb_collect(input int backpressure);
+  task automatic tb_collect(input int bp_mode);
     int idx;
     int watchdog;
     logic last_seen;
     logic finished;
+    logic hold_seen;
+    logic [15:0] hold_data;
+    logic hold_last;
 
     idx = 0;
     watchdog = 0;
     last_seen = 1'b0;
     finished = 1'b0;
+    hold_seen = 1'b0;
+    hold_data = 16'd0;
+    hold_last = 1'b0;
     m_tready <= 1'b1;
 
     while ((watchdog < 20000) && !finished) begin
-      if (backpressure
-          && ((idx < 4) || (idx == 250) || (idx == 251))) begin
-        // Alternate ready so the first beats are delayed but never deadlocked.
-        m_tready <= watchdog[0];
+      // While ready is low the DUT must hold data and last stable.
+      if (m_tvalid && !m_tready) begin
+        if (hold_seen
+            && ((m_tdata !== hold_data) || (m_tlast !== hold_last))) begin
+          mismatch++;
+        end
+        hold_seen = 1'b1;
+        hold_data = m_tdata;
+        hold_last = m_tlast;
       end else begin
-        m_tready <= 1'b1;
+        hold_seen = 1'b0;
       end
+
+      case (bp_mode)
+        0: m_tready <= 1'b1;
+        1: begin
+          if ((idx < 4) || (idx == 250) || (idx == 251)) begin
+            m_tready <= watchdog[0];
+          end else begin
+            m_tready <= 1'b1;
+          end
+        end
+        2: begin
+          if ((idx >= 100) && (idx < 106)) begin
+            m_tready <= watchdog[0];
+          end else begin
+            m_tready <= 1'b1;
+          end
+        end
+        3: begin
+          m_tready <= (((watchdog + idx) % 3) != 0);
+        end
+        4: begin
+          if ((idx % 17) == 0) begin
+            m_tready <= watchdog[0];
+          end else begin
+            m_tready <= 1'b1;
+          end
+        end
+        default: m_tready <= 1'b1;
+      endcase
 
       @(posedge clk);
       watchdog++;
@@ -394,6 +501,8 @@ module tb_falcon512_verify;
         if (verify_norm_sq !== exp_norm_q) begin
           mismatch++;
         end
+        verdict_cycle_q = cycle_q;
+        last_latency_q = verdict_cycle_q - last_input_cycle_q;
         m_tready <= 1'b0;
         finished = 1'b1;
       end
@@ -407,26 +516,73 @@ module tb_falcon512_verify;
   // 7. Runs and result token
   // ---------------------------------------------------------------------------
   initial begin
-    for (int run = 1; run <= 8; run++) begin
+    int run;
+    int bp_c;
+    int gap_c;
+    int seed_c;
+    int total_runs_c;
+
+    if (!$value$plusargs("SEED=%d", seed_base_q)) seed_base_q = 0;
+    if (!$value$plusargs("SEED_COUNT=%d", seed_count_q)) seed_count_q = 1;
+    if (!$value$plusargs("BP=%d", bp_mode_q)) bp_mode_q = 0;
+    if (!$value$plusargs("REGRESS=%d", regress_q)) regress_q = 0;
+    if (seed_count_q < 1) seed_count_q = 1;
+
+    total_runs_c = 8;
+    if (regress_q != 0) begin
+      total_runs_c = 16 + seed_count_q;
+    end
+
+    for (run = 1; run <= total_runs_c; run++) begin
+      bp_c = 0;
+      gap_c = 0;
+      seed_c = seed_base_q + run * 7919;
       case (run)
         1: case_id = 1;
         2: case_id = 2;
         3: case_id = 3;
         4: case_id = 4;
         5, 6, 7: case_id = 5;
-        default: case_id = 3; // T6 is a backpressure replay of the T3 vector
+        8: begin
+          case_id = 3;  // T6 is a backpressure replay of the T3 vector
+          bp_c = 1;
+        end
+        9: case_id = 7;
+        10: case_id = 8;
+        11: case_id = 9;
+        12: case_id = 10;
+        13: begin case_id = 5; bp_c = 1; end
+        14: begin case_id = 5; bp_c = 2; end
+        15: begin case_id = 5; bp_c = 3; end
+        16: begin case_id = 7; bp_c = 4; gap_c = 1; end
+        default: begin
+          case_id = 5;
+          bp_c = bp_mode_q;
+          seed_c = seed_base_q + (run - 8) * 104729;
+        end
       endcase
 
-      tb_setup(case_id, run * 7919);
+      tb_setup(case_id, seed_c);
       tb_reset();
       cycles = 0;
-      tb_send(0);
-      tb_send(1);
-      tb_send(2);
-      tb_collect(run == 8);
+      last_input_cycle_q = 0;
+      last_latency_q = 0;
+      tb_send(0, gap_c);
+      tb_send(1, gap_c);
+      tb_send(2, gap_c);
+      tb_collect(bp_c);
 
-      $display("RUN %0d  CASE T%0d  norm=%0d  accept=%0d  mismatches=%0d",
-               run, case_id, exp_norm_q, exp_accept_q, mismatch);
+      if ((bp_c == 0) && (gap_c == 0)
+          && (last_latency_q != 12296)) begin
+        mismatch++;
+      end
+      if ((bp_c != 0) && (last_latency_q < 12296)) begin
+        mismatch++;
+      end
+
+      $display("RUN %0d  CASE T%0d  seed=%0d  bp=%0d  gap=%0d  latency=%0d  norm=%0d  accept=%0d  mismatches=%0d",
+               run, case_id, seed_c, bp_c, gap_c, last_latency_q,
+               exp_norm_q, exp_accept_q, mismatch);
     end
 
     if (mismatch == 0) begin

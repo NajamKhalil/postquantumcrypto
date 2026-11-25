@@ -176,7 +176,7 @@ Package functions use the classic function-name assignment form instead of `retu
 
 ## 11. Verification strategy
 
-The test plan is `falcon512_testplan.md`. It uses an independent schoolbook reference model in the testbench, so the NTT is checked against a different algorithm rather than against itself. Cases cover the negacyclic wrap sign, the inclusive norm boundary, random known-answer vectors, and backpressure. Results are recorded in `falcon512_verification.md`.
+The test plan is `falcon512_testplan.md`. It uses an independent schoolbook reference model in the testbench, so the NTT is checked against a different algorithm rather than against itself. Cases cover the negacyclic wrap sign, the inclusive norm boundary, dense accept and reject vectors near that boundary, seeded known-answer sweeps, four output-backpressure patterns, and uneven input timing. `sim/run.ps1` preserves the canonical eight-run sweep; `sim/regress.ps1` runs the full deterministic suite in three configurations and `sim/mutation.ps1` re-checks five faults on external copies. Results are recorded in `falcon512_verification.md`.
 
 ---
 
@@ -187,10 +187,12 @@ The test plan is `falcon512_testplan.md`. It uses an independent schoolbook refe
 | `rtl/falcon512_pkg.sv` | shared constants and coefficient helper functions |
 | `rtl/falcon512_ntt.sv` | reusable 512-point forward/inverse NTT engine |
 | `rtl/falcon512_verify.sv` | top-level controller, memories, pointwise stage, permutation buffer and norm check |
-| `sim/tb_falcon512_verify.sv` | self-checking testbench with transform-based input generation, schoolbook reference model and KAT cases |
-| `sim/f_list.f`, `sim/run.ps1`, `sim/run.sh` | compile list and run scripts |
+| `sim/tb_falcon512_verify.sv` | self-checking testbench with transform-based input generation, schoolbook reference model, KAT cases and plusarg regression controls |
+| `sim/f_list.f`, `sim/run.ps1`, `sim/run.sh` | compile list and canonical run scripts |
+| `sim/regress.ps1`, `sim/regress.log` | deterministic multi-seed regression runner and raw output |
+| `sim/mutation.ps1`, `sim/mutation.rpt` | repeatable mutation campaign and raw output |
 | `lint/lint.log` | real Icarus lint output without `RTL_SIM` |
-| `synth/synth.ys`, `synth/synth.log` | Yosys synthesis script and raw output |
+| `synth/synth.ys`, `synth/synth_probe.ys`, `synth/synth_probe.log` | Yosys scripts and completed coarse-synthesis output |
 | `docs/falcon512_verification.md` | measured results, raw tool output and mutation campaign |
 
 ---
