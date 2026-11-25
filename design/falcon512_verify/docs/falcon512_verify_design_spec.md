@@ -4,6 +4,7 @@
 |---|---|
 | Block | `falcon512_verify` (`rtl/falcon512_verify.sv`) |
 | Function | verifies a Falcon-512 signature over the NTRU ring with `q=12289`, `n=512`, `beta^2=34034726` |
+| Author | desktop-ifrf24e\najam |
 | Language | SystemVerilog-2012 |
 | Target | FPGA synthesizable RTL, single clock and one active-low asynchronous reset |
 | Clocking | `axi_st_clk` / `axi_st_areset_n` |
@@ -181,9 +182,8 @@ The test plan is `falcon512_testplan.md`. It uses an independent schoolbook refe
 | `rtl/falcon512_pkg.sv` | shared constants and coefficient helper functions |
 | `rtl/falcon512_ntt.sv` | reusable 512-point forward/inverse NTT engine |
 | `rtl/falcon512_verify.sv` | top-level controller, memories, pointwise stage and norm check |
-| `sim/tb_falcon512_verify.sv` | self-checking testbench and schoolbook reference model |
-| `sim/tb_falcon512_vectors.svh` | generated known-answer vectors |
-| `sim/f_list.f`, `sim/run.sh`, `sim/run.ps1` | compile list and run scripts |
+| `sim/tb_falcon512_verify.sv` | self-checking testbench with transform-based input generation, schoolbook reference model and KAT cases |
+| `sim/f_list.f`, `sim/run.ps1`, `sim/run.sh` | compile list and run scripts |
 
 ---
 
