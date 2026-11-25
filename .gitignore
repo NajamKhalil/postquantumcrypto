@@ -3,7 +3,7 @@ monitor/rtl_dashboard.html
 monitor/usage.jsonl
 
 # Simulator and synthesis scratch (evidence logs are kept)
-design/sim/my_sim_exe*
-design/sim/simulation.vcd
-design/sim/*.vvp
-design/synth/*.ys
+**/sim/my_sim_exe*
+**/sim/simulation.vcd
+**/sim/*.vvp
+**/synth/*.ys

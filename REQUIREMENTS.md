@@ -6,11 +6,11 @@ starts `TODO` and is updated to `DONE` with evidence as work completes. The
 
 | ID | Status | Requirement | Evidence |
 |---|---|---|---|
-| R1 | DONE | Organise the repository into the methodology skeleton: `rtl/`, `sim/`, `docs/` (+ `docs/diagrams/`), `fpv/`, `synth/`, `vcsmx/`, `lint/`, `cdc/`, `sta/`, with `placeholder` in empty directories | `design/` holds every required subdirectory; `git status` confirms placeholders are tracked |
-| R2 | DONE | Stand up `monitor/rtl_monitor.py` verbatim from PART 9 section 9 before any RTL; start `--watch`, confirm the block is listed with grey gates | 1639 lines copied verbatim; `--status` reports `design  FAIL  0/10  RTL FAIL, 9 never run`; watcher running |
-| R3 | TODO | Extract the design requirements from `design/docs/lattice-based-cryptography.pdf` into a cited design specification | 287-page PDF text extracted; design not yet written |
+| R1 | DONE | Organise the repository into the methodology skeleton: `rtl/`, `sim/`, `docs/` (+ `docs/diagrams/`), `fpv/`, `synth/`, `vcsmx/`, `lint/`, `cdc/`, `sta/`, with `placeholder` in empty directories | `design/falcon512_verify/` holds every required subdirectory; `git status` confirms placeholders are tracked |
+| R2 | DONE | Stand up `monitor/rtl_monitor.py` verbatim from PART 9 section 9 before any RTL; start `--watch`, confirm the block is listed with grey gates | 1639 lines copied verbatim; `--status` reports the block with `0/10` gates; watcher running |
+| R3 | DONE | Extract the design requirements from `design/docs/lattice-based-cryptography.pdf` into a cited design specification | `design/falcon512_verify/docs/falcon512_verify_design_spec.md`, sections 1, 6 and 13 cite the PDF |
 | R4 | DONE | Install open-source tooling for simulation, lint/synthesis and Python (dashboard and PDF extraction) | Python 3.12.10, Icarus Verilog 12.2022.06.11 at `C:\iverilog\bin`, yowasp-yosys 0.71, pypdf 7.1.1 |
-| R5 | TODO | Choose the lattice scheme, parameter set and top-level interface with the engineer before RTL work (flagged ambiguity - four schemes in the PDF) | - |
+| R5 | DONE | Choose the lattice scheme, parameter set and top-level interface with the engineer before RTL work (flagged ambiguity - four schemes in the PDF) | Engineer selected Falcon/FN-DSA, standards-compliant parameters, first block narrowed to the Falcon-512 verify core |
 | R6 | TODO | Write synthesizable FPGA-friendly RTL following PART 2: headers, `_q`/`_c`, numbered sections, elaboration checks, `RTL_SIM`-guarded sim-only code | - |
 | R7 | TODO | Write a self-checking testbench with a reference model, error count, watchdog and `RESULT  = PASS` end-of-test line, and run it | - |
 | R8 | TODO | Produce lint and synthesis evidence from real tool runs into `lint/` and `synth/` | - |
