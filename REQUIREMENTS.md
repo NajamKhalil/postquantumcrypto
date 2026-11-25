@@ -1,0 +1,27 @@
+# Post-Quantum Crypto RTL - Requirements
+
+Checklist extracted from the request and the RTL design methodology. Every item
+starts `TODO` and is updated to `DONE` with evidence as work completes. The
+`FEAT` gate of `monitor/rtl_monitor.py` reads this file.
+
+| ID | Status | Requirement | Evidence |
+|---|---|---|---|
+| R1 | DONE | Organise the repository into the methodology skeleton: `rtl/`, `sim/`, `docs/` (+ `docs/diagrams/`), `fpv/`, `synth/`, `vcsmx/`, `lint/`, `cdc/`, `sta/`, with `placeholder` in empty directories | `design/` holds every required subdirectory; `git status` confirms placeholders are tracked |
+| R2 | DONE | Stand up `monitor/rtl_monitor.py` verbatim from PART 9 section 9 before any RTL; start `--watch`, confirm the block is listed with grey gates | 1639 lines copied verbatim; `--status` reports `design  FAIL  0/10  RTL FAIL, 9 never run`; watcher running |
+| R3 | TODO | Extract the design requirements from `design/docs/lattice-based-cryptography.pdf` into a cited design specification | 287-page PDF text extracted; design not yet written |
+| R4 | DONE | Install open-source tooling for simulation, lint/synthesis and Python (dashboard and PDF extraction) | Python 3.12.10, Icarus Verilog 12.2022.06.11 at `C:\iverilog\bin`, yowasp-yosys 0.71, pypdf 7.1.1 |
+| R5 | TODO | Choose the lattice scheme, parameter set and top-level interface with the engineer before RTL work (flagged ambiguity - four schemes in the PDF) | - |
+| R6 | TODO | Write synthesizable FPGA-friendly RTL following PART 2: headers, `_q`/`_c`, numbered sections, elaboration checks, `RTL_SIM`-guarded sim-only code | - |
+| R7 | TODO | Write a self-checking testbench with a reference model, error count, watchdog and `RESULT  = PASS` end-of-test line, and run it | - |
+| R8 | TODO | Produce lint and synthesis evidence from real tool runs into `lint/` and `synth/` | - |
+| R9 | TODO | Write the three PART 7 documents: design spec, test plan, verification report | - |
+| R10 | TODO | Run a mutation campaign against the final RTL/bench and record results in the verification report | - |
+| R11 | TODO | Commit stable states with short, human-friendly commit messages | - |
+
+## Suggested (not built without approval)
+
+| ID | Status | Item | Why deferred |
+|---|---|---|---|
+| S1 | - | Full parameterised implementations of all four schemes | The PDF covers Kyber, FrodoKEM, Dilithium and Falcon; one block at a time is the manageable scope |
+| S2 | - | Place-and-route / static timing sign-off | No open-source PnR/STA flow installed here; `TIMING` gate will stay grey and be reported honestly |
+| S3 | - | CDC and formal-property sign-off | Single clock/reset expected and no CDC/FPV tool installed; gates stay grey unless needed |
